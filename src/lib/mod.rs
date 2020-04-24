@@ -67,7 +67,7 @@ pub fn process_file(filename: &Path, path_watermark: &Path) -> Result<i32> {
 }
 
 pub fn watermark_file(filename: &Path, path_watermark: &Path) -> Result<i32> {
-    const WATERMARK_COUNT: u32 = 20; //TODO Let the user specify this
+    const WATERMARK_COUNT: u32 = 10; //TODO Let the user specify this
     const WATERMARK_OPACITY: u8 = 50;
 
     //TODO Watermark is too small on smaller images. Will need to change it so the watermark count is less on small photos
@@ -79,7 +79,7 @@ pub fn watermark_file(filename: &Path, path_watermark: &Path) -> Result<i32> {
     let mut watermark = image::open(path_watermark).unwrap();
     let watermark_width: u32 = width / WATERMARK_COUNT;
     let watermark_height: u32 = height / WATERMARK_COUNT;
-    watermark = watermark.resize(watermark_width, watermark_height, imageops::FilterType::Triangle);
+    watermark = watermark.resize_exact(watermark_width, watermark_height, imageops::FilterType::Triangle);
 
     for i in 0..WATERMARK_COUNT {
         for j in 0..WATERMARK_COUNT {
@@ -100,8 +100,8 @@ pub fn watermark_file(filename: &Path, path_watermark: &Path) -> Result<i32> {
 
     fs::create_dir_all("watermarked_photos")?;
 
-    let foo = format!("watermarked_photos/{}{}", "2_", name);
-    println!("{}", foo);
-    let _res = img.save(foo);
+    let watermarked_file_name = format!("watermarked_photos/{}", name);
+    let _res = img.save(&watermarked_file_name);
+    println!("Watermarked photo {0} as {1}", name, watermarked_file_name);
     Ok(0)
 }
